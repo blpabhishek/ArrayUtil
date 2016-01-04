@@ -22,13 +22,49 @@ void test_resize(){
 void test_areEqual(){
 	ArrayUtil a = create(4,10);
 	ArrayUtil b = create(4,10);
+
 	assert(areEqual(a,b));
+
+	ArrayUtil arr = create(4,10);
+	*((int*)arr.base+0) = 78;
+	*((int*)arr.base+1) = 79;
+
+	ArrayUtil arr1 = create(4,10);
+	*((int*)arr1.base+0) = 78;
+	*((int*)arr1.base+1) = 79;
+
+	assert(areEqual(arr,arr1));
+}
+
+void test_findIndex(){
+	ArrayUtil arr = create(4,10);
+	*((int*)arr.base+0) = 78;
+	*((int*)arr.base+1) = 79;
+	*((int*)arr.base+2) = 90;
+	*((int*)arr.base+3) = 92;
+
+
+	int var = 92;
+	assert(findIndex(arr,&var)==3);
 }
 
 void test_areEqual_not(){
 	ArrayUtil a = create(4,10);
 	ArrayUtil b = create(8,10);
+
 	assert(!areEqual(a,b));
+
+	ArrayUtil arr = create(8,10);
+	*((double*)arr.base+0) = 78;
+	*((double*)arr.base+1) = 79;
+
+	ArrayUtil arr1 = create(8,10);
+	*((double*)arr1.base+0) = 78;
+	*((double*)arr1.base+1) = 79;
+	*((double*)arr1.base+2) = 80;
+
+
+	assert(!areEqual(arr,arr1));
 }
 
 void run_test(){
@@ -36,25 +72,11 @@ void run_test(){
 	test_resize();
 	test_areEqual();
 	test_areEqual_not();
+	test_findIndex();
+	//test_dispose();
 }
 
 int main(void){
 	run_test();
-	ArrayUtil arr = create(4,10);
-	int a = 23;	
-	int b = 33;
-	arr.base[0] = &a;
-	arr.base[1] = &b;
-	printf("%d\n",*(int *)arr.base[0]);
-	printf("%d\n",*(int *)arr.base[1]);
-
-	ArrayUtil arr1 = create(1,10);
-	char a1= 65;
-	char b1 = 68;
-	arr1.base[0] = &a1;
-	arr1.base[1] = &b1;
-	printf("%c\n",*(char *)arr1.base[0]);
-	printf("%c\n",*(char *)arr1.base[1]);
-
 	return 0;
 };
