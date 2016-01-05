@@ -1,4 +1,5 @@
 #include "arr_util.h"
+#include <string.h>
 
 ArrayUtil create(int typeSize, int length){
 	ArrayUtil util = *(ArrayUtil *)malloc(sizeof(ArrayUtil));
@@ -32,16 +33,48 @@ int areEqual(ArrayUtil a, ArrayUtil b){
 
 int findIndex(ArrayUtil util, void* element){
 	int index = -1;
-	for(int i = 0; i < util.length * util.typeSize; i++){
-		if(*((unsigned char*)util.base+i)==*((unsigned char*)element)){
-			index = i/util.typeSize;
-			break;
-		}
-	}
+	for(int i = 0; i < util.length; i++)
+		if(memcmp(util.base+(i*util.typeSize), element, util.typeSize)==0)
+			return i;
 	return index;
 };
 
 void dispose(ArrayUtil util){
 	free(util.base);
+};
+
+void* findFirst(ArrayUtil util, MatchFunc match, void* hint){
+	void *item;
+	for (int i = 0; i < util.length; ++i){
+		item = util.base+(i*util.typeSize);
+		if(match(hint,item))
+			return item;
+	};
+	return NULL;
+};
+
+
+int count(ArrayUtil util, MatchFunc match, void* hint){
+	int all_count = 0;
+	void *item;
+	for (int i = 0; i < util.length; ++i){
+		item = util.base+(i*util.typeSize);
+		if(match(hint,item))
+			all_count++;
+	};
+	return all_count;
+}
+
+int isEven(void* hint, void* item){
+	int num = *((int*)item);
+	if(num==0) return 0;
+	return (num%2==0);
+};
+
+int isDivisible(void* hint, void* item){
+	int num = *((int*)item);
+	int divisor = *((int*)hint);
+	if(num==0) return 0;
+	return (num%divisor==0);
 }
 

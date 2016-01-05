@@ -2,11 +2,12 @@
 #include <assert.h>
 
 void test_create(){
-	int size =4;
+	int size =sizeof(int);
 	int length =10;
 	ArrayUtil arr = create(size,length);
 	assert(arr.length==length);
 	assert(arr.typeSize==size);
+	dispose(arr);
 };
 
 void test_resize(){
@@ -16,7 +17,7 @@ void test_resize(){
 	ArrayUtil arr = create(size,length);
 	arr = resize(arr,newlength);
 	assert(arr.length==newlength);
-
+	dispose(arr);
 };
 
 void test_areEqual(){
@@ -34,6 +35,11 @@ void test_areEqual(){
 	*((int*)arr1.base+1) = 79;
 
 	assert(areEqual(arr,arr1));
+
+	dispose(arr);
+	dispose(arr1);
+	dispose(a);
+	dispose(b);
 }
 
 void test_findIndex(){
@@ -46,6 +52,18 @@ void test_findIndex(){
 
 	int var = 92;
 	assert(findIndex(arr,&var)==3);
+
+
+	ArrayUtil darr = create(8,10);
+	*((double*)darr.base+0) = 78;
+	*((double*)darr.base+1) = 79;
+
+
+	double dvar = 78;
+	assert(findIndex(darr,&dvar)==0);
+
+	dispose(arr);
+	dispose(darr);
 }
 
 void test_areEqual_not(){
@@ -65,18 +83,83 @@ void test_areEqual_not(){
 
 
 	assert(!areEqual(arr,arr1));
-}
 
-void run_test(){
-	test_create();
-	test_resize();
-	test_areEqual();
-	test_areEqual_not();
-	test_findIndex();
-	//test_dispose();
-}
-
-int main(void){
-	run_test();
-	return 0;
+	dispose(arr);
+	dispose(arr1);
+	dispose(a);
+	dispose(b);
 };
+
+
+void test_findFirst_isEven(){
+	ArrayUtil util = create(4,10);
+	*((int*)util.base+0) = 79;
+	*((int*)util.base+1) = 80;
+
+	int actual = *((int*)(findFirst(util,isEven,NULL)));
+	int expected = 80;
+	assert(actual==expected);
+}
+
+
+void test_findFirst_isEven_not_found(){
+	ArrayUtil util = create(4,10);
+	*((int*)util.base+0) = 79;
+	*((int*)util.base+1) = 89;
+
+
+	void *val = findFirst(util,isEven,NULL);
+	void *expect = NULL;
+	
+	assert(expect==val);
+}
+
+void test_findFirst_isDivisible(){
+	ArrayUtil util = create(4,10);
+
+	*((int*)util.base+0) = 79;
+	*((int*)util.base+1) = 84;
+
+	int divisor = 4;
+	void *hint = &divisor;
+
+	int actual = *((int*)(findFirst(util,isDivisible, hint)));
+	int expected = 84;
+	assert(actual==expected);
+}
+
+
+void test_count_isEven(){
+	ArrayUtil util = create(4,10);
+
+	*((int*)util.base+0) = 79;
+	*((int*)util.base+1) = 84;
+	*((int*)util.base+2) = 34;
+	*((int*)util.base+3) = 89;
+
+
+	int actual = count(util,isEven,NULL);
+	int expected = 2;
+	assert(actual==expected);
+}
+
+void test_count_isDivisible(){
+	ArrayUtil util = create(4,10);
+
+	*((int*)util.base+0) = 9;
+	*((int*)util.base+1) = 18;
+	*((int*)util.base+2) = 27;
+	*((int*)util.base+3) = 89;
+
+	int divisor = 9;
+	void *hint = &divisor;
+	int actual = count(util,isDivisible,hint);
+	int expected = 3;
+	assert(actual==expected);
+}
+
+
+// int main(int argc, char const *argv[]){
+// 	test_count_isDivisible();
+// 	return 0;
+// }

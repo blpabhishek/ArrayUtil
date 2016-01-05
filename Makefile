@@ -5,4 +5,4 @@ run: main.c arr_util.c
 show: main
 	./main
 clean:
-	rm main
+	rm main arr_util.o arrayUtilTest main main.o test_main.c
