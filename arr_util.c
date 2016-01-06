@@ -43,7 +43,7 @@ void dispose(ArrayUtil util){
 	free(util.base);
 };
 
-void* findFirst(ArrayUtil util, MatchFunc match, void* hint){
+void* findFirst(ArrayUtil util, MatchFunc *match, void* hint){
 	void *item;
 	for (int i = 0; i < util.length; ++i){
 		item = util.base+(i*util.typeSize);
@@ -54,7 +54,7 @@ void* findFirst(ArrayUtil util, MatchFunc match, void* hint){
 };
 
 
-int count(ArrayUtil util, MatchFunc match, void* hint){
+int count(ArrayUtil util, MatchFunc *match, void* hint){
 	int all_count = 0;
 	void *item;
 	for (int i = 0; i < util.length; ++i){
@@ -78,3 +78,33 @@ int isDivisible(void* hint, void* item){
 	return (num%divisor==0);
 }
 
+void* findLast(ArrayUtil util, MatchFunc *match, void* hint){
+	void *item;
+	for (int i = util.length; i > 0; i--){
+		item = util.base+(i*util.typeSize);
+		if(match(hint,item))
+			return item;
+	};
+	return NULL;
+}
+
+int filter(ArrayUtil util, MatchFunc *match, void* hint, void** destination, int maxItems ){
+	int all_count = 0;
+	void *item ;
+	for (int i = 0; i < util.length; i++){
+		item = util.base+(i*util.typeSize);
+		if(match(hint,item)){
+			memcpy(*destination+(util.typeSize*all_count),item,util.typeSize);
+			all_count++;
+		}
+		if(all_count >= maxItems)
+			break;
+	};
+	return all_count;	
+};
+
+int isSame(void* hint, void* item){
+	char character =  *((char*)item);
+	char criteria =  *((char*)hint);
+	return (character==criteria);
+}

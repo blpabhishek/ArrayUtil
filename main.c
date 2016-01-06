@@ -110,7 +110,7 @@ void test_findFirst_isEven_not_found(){
 
 	void *val = findFirst(util,isEven,NULL);
 	void *expect = NULL;
-	
+
 	assert(expect==val);
 }
 
@@ -125,6 +125,25 @@ void test_findFirst_isDivisible(){
 
 	int actual = *((int*)(findFirst(util,isDivisible, hint)));
 	int expected = 84;
+	assert(actual==expected);
+}
+
+
+void test_findLast_isDivisible(){
+	ArrayUtil util = create(4,10);
+
+	*((int*)util.base+0) = 79;
+	*((int*)util.base+1) = 84;
+	*((int*)util.base+2) = 69;
+	*((int*)util.base+3) = 44;
+	*((int*)util.base+4) = 64;
+
+
+	int divisor = 4;
+	void *hint = &divisor;
+
+	int actual = *((int*)(findLast(util,isDivisible, hint)));
+	int expected = 64;
 	assert(actual==expected);
 }
 
@@ -156,10 +175,26 @@ void test_count_isDivisible(){
 	int actual = count(util,isDivisible,hint);
 	int expected = 3;
 	assert(actual==expected);
-}
+};
+void test_filter_isDivisible(){
+	int val = 65;
+	ArrayUtil util = create(sizeof(int),10);
+	int *base = (int *)util.base;
+	for (int i = 0; i < util.length; ++i,val++)
+		base[i] = val;
 
+	int maxItems = 8;
+	ArrayUtil destination = create(sizeof(int),maxItems);
 
-// int main(int argc, char const *argv[]){
-// 	test_count_isDivisible();
-// 	return 0;
-// }
+	int divisor = 2;
+	void *hint = &divisor;
+	int count = filter(util,isDivisible,hint,&(destination.base),maxItems);
+	assert(5 == count);
+	assert(66 == *((int*)destination.base+0));
+	assert(68 == *((int*)destination.base+1));
+	assert(70 == *((int*)destination.base+2));
+	assert(72 == *((int*)destination.base+3));
+	assert(74 == *((int*)destination.base+4));
+	assert(0 == *((int*)destination.base+5));
+};
+
