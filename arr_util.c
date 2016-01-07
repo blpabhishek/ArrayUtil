@@ -97,8 +97,7 @@ int filter(ArrayUtil util, MatchFunc *match, void* hint, void** destination, int
 			memcpy(*destination+(util.typeSize*all_count),item,util.typeSize);
 			all_count++;
 		}
-		if(all_count >= maxItems)
-			break;
+		if(all_count >= maxItems) break;
 	};
 	return all_count;	
 };
@@ -108,3 +107,44 @@ int isSame(void* hint, void* item){
 	char criteria =  *((char*)hint);
 	return (character==criteria);
 }
+
+void mapper(void* hint, void* sourceItem, void* destinationItem){
+	*(int*)destinationItem = *(int*)sourceItem + *(int*)hint ;
+};
+
+void multiply(void *hint,void *item){
+	*(int*)item = *(int*)item * *(int*)hint ;
+};
+
+void map(ArrayUtil source, ArrayUtil destination, ConvertFunc* convert, void* hint){
+	void *item;
+	for (int i = 0; i < source.length; i++){
+		item = source.base+(i*source.typeSize);
+		convert(hint,item,destination.base+(i*source.typeSize));
+	};
+};
+
+void forEach(ArrayUtil util, OperationFunc* operation, void* hint){
+	void *item;
+	for (int i = 0; i < util.length; i++){
+		item = util.base+(i*util.typeSize);
+		operation(hint,item);
+	};
+};
+
+void* reduce(ArrayUtil util, ReducerFunc* reducer, void* hint, void* intialValue){
+	void *item;
+	for (int i = 0; i < util.length; i++){
+		item = util.base+(i*util.typeSize);
+		intialValue = reducer(hint,intialValue,item);
+	};
+	return item;
+};
+ 
+
+void* sum(void* hint, void* previousItem, void* item){
+	*(int*)item = *(int*)item + *(int*)previousItem ;
+	return item;
+};
+
+

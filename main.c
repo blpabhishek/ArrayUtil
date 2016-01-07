@@ -190,11 +190,70 @@ void test_filter_isDivisible(){
 	void *hint = &divisor;
 	int count = filter(util,isDivisible,hint,&(destination.base),maxItems);
 	assert(5 == count);
-	assert(66 == *((int*)destination.base+0));
-	assert(68 == *((int*)destination.base+1));
-	assert(70 == *((int*)destination.base+2));
-	assert(72 == *((int*)destination.base+3));
-	assert(74 == *((int*)destination.base+4));
-	assert(0 == *((int*)destination.base+5));
+	val = 66;
+	for (int i = 0; i < 3; ++i,val=val+2){
+		assert(val == *((int*)destination.base+i));
+	}
 };
 
+
+void test_filter_isSame(){
+	int val = 65;
+	ArrayUtil util = create(sizeof(char),10);
+	char *base = (char *)util.base;
+	for (int i = 0; i < util.length; ++i,val++)
+		base[i] = val;
+
+	int maxItems = 5;
+	ArrayUtil destination = create(sizeof(int),maxItems);
+
+	int search = 66;
+	void *hint = &search;
+	int count = filter(util,isSame,hint,&(destination.base),maxItems);
+	assert(1 == count);
+	assert(66 == *((char*)destination.base+0));
+	assert(destination.length==maxItems);
+};
+
+void test_map_mapper(){
+	ArrayUtil source = create(sizeof(int),10);
+	ArrayUtil destination = create(sizeof(int),10);
+	int val =65;
+	int *base = (int *)source.base;
+	for (int i = 0; i < source.length; ++i,val++)
+		base[i] = val;
+	int no = 2;
+	int *hint = &no;
+	map(source,destination,mapper,hint);
+	val = 67;
+	for (int i = 0; i < 3; ++i,val++){
+		assert(val== *((int*)destination.base+i));
+	}
+};
+
+
+void test_forEach_operation(){
+	ArrayUtil array = create(sizeof(int),10);
+	int val =5;
+	int *base = (int *)array.base;
+	for (int i = 0; i < array.length; ++i,val++)
+		base[i] = val;
+	int no = 2;
+	int *hint = &no;
+	forEach(array,multiply,hint);
+
+	assert(10== *((int*)array.base+0));
+	assert(12== *((int*)array.base+1));
+	assert(14== *((int*)array.base+2));
+};
+
+void test_reduce_sum(){
+	ArrayUtil array = create(sizeof(int),10);
+	int val =5;
+	int *base = (int *)array.base;
+	for (int i = 0; i < array.length; ++i,val++)
+		base[i] = val;
+	int iniail_val = 0;
+	void *red = reduce(array,sum,NULL,&iniail_val);
+	assert(*((int *)red) == 95);
+}
