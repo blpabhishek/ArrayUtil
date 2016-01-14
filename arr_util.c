@@ -2,7 +2,7 @@
 #include <string.h>
 
 ArrayUtil create(int typeSize, int length){
-	ArrayUtil util = *(ArrayUtil *)malloc(sizeof(ArrayUtil));
+	ArrayUtil util;
 	util.base = calloc(length,typeSize);
 	util.length =length;
 	util.typeSize =typeSize;
